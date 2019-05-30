@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import App from './App.vue'
 import store from './store'
+import { Laue } from 'laue';
+
+Vue.use(Laue);
 
 Vue.config.productionTip = false
 

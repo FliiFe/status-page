@@ -25,6 +25,5 @@ body {
 #app {
     max-width: 600px;
     margin: 0 auto;
-    text-shadow: 0px 0px 0.5px #1c1c1c;
 }
 </style>
