@@ -32,7 +32,7 @@
             prop="value"
             color="url(#color-id)"
           ></la-area>
-          <la-tooltip animated>
+          <la-tooltip>
             <div class="tooltip" slot-scope="props">
               <div
                 :key="item.value"
