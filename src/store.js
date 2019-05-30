@@ -19,7 +19,7 @@ export default new Vuex.Store({
             const sortedValues = monitor.response_times.map(({ value }) => value).sort((a, b) => b - a)
             const median = (sortedValues[(sortedValues.length - 1) >> 1] + sortedValues[sortedValues.length >> 1]) / 2
             monitor.minres = monitor.response_times.reduce((a, { value }) => Math.min(a, value), +Infinity)
-            monitor.processed_response_times = monitor.response_times.map(({ datetime, value }) => ({ datetime, value: Math.min(value, 3 * median) - monitor.minres + 10 }))
+            monitor.processed_response_times = monitor.response_times.map(({ datetime, value }) => ({ datetime, value: Math.min(value, 3 * median) - monitor.minres + 10, actualValue: value}))
             if (ind >= 0) {
                 Vue.set(state.monitors, ind, monitor)
             } else {

@@ -5,7 +5,7 @@
       <div class="first">
         <div>{{monitor.friendly_name}}</div>
         <div>
-          {{monitor.custom_uptime_ratio.split('-')[0]}}%
+          {{parseFloat(parseFloat(monitor.custom_uptime_ratio.split('-')[0]).toFixed(2))}}%
           <div :class="['indicator', 'status' + monitor.status]"></div>
         </div>
       </div>
@@ -38,7 +38,7 @@
                 :key="item.value"
                 v-for="item in props.actived"
                 v-show="item.value"
-                ><p class="time">{{getTimeFromUnix(+props.label)}}</p> — {{ item.value - 10 + monitor.minres }}ms</div>
+                ><p class="time">{{getTimeFromUnix(+props.label)}}</p> — {{ getActualValue(monitor, props.label) }}ms</div>
             </div>
           </la-tooltip>
         </la-cartesian>
@@ -60,6 +60,9 @@ export default {
             return `${pad(date.getHours().toString())}:${pad(
                 date.getMinutes()
             )}`;
+        },
+        getActualValue(monitor, time) {
+            return monitor.processed_response_times.find(({datetime}) => datetime === time).actualValue
         }
     },
     mounted() {
@@ -106,7 +109,7 @@ h1 {
 }
 
 .card {
-    border-radius: 4px;
+    border-radius: 5px;
     border: 1px solid #aaa;
     margin-bottom: 16px;
     margin-top: 16px;
