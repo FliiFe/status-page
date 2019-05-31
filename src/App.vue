@@ -21,9 +21,4 @@ body {
     background-color: #fafafa;
     color: #1c1c1c;
 }
-
-#app {
-    max-width: 600px;
-    margin: 0 auto;
-}
 </style>

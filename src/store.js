@@ -1,8 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-// const PSP_ID = 'NLPAVC3Ov'
-// const API_URL = `https://cors-anywhere.herokuapp.com/https://stats.uptimerobot.com/api/status-page/${PSP_ID}/`
 const API_URL = (method) => `https://api.uptimerobot.com/v2/${method}`
 const API_KEYS = ['m781804470-3666285d01ccbae016c24f62', 'm781804458-4537affcf8190fbd37d61500', 'm782786452-a1524749270d014dfd4b388e']
 

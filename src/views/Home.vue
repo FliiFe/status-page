@@ -1,58 +1,65 @@
 <template>
   <div class="home">
     <h1 @click="update()">{{$store.getters.globalStatus ? "•ᴗ•" : "ಠ_ಠ"}}</h1>
-    <div class="card" v-for="monitor in $store.getters.sortedMonitors" v-bind:key="monitor.id">
-      <div class="first">
-        <div>{{monitor.friendly_name}}</div>
-        <div>
-          {{parseFloat(parseFloat(monitor.custom_uptime_ratio.split('-')[0]).toFixed(2))}}%
-          <div :class="['indicator', 'status' + monitor.status]"></div>
+    <div class="card-container">
+      <div class="card" v-for="monitor in $store.getters.sortedMonitors" v-bind:key="monitor.id">
+        <div class="first">
+          <div>{{monitor.friendly_name}}</div>
+          <div>
+            {{parseFloat(parseFloat(monitor.custom_uptime_ratio.split('-')[0]).toFixed(2))}}%
+            <div :class="['indicator', 'status' + monitor.status]"></div>
+          </div>
         </div>
-      </div>
-      <div class="second">
-        <la-cartesian :data="monitor.processed_response_times" :padding="2" autoresize>
-          <defs>
-            <linearGradient id="color-id" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#2c3e50"></stop>
-              <stop offset="0.5" stop-color="#42b983"></stop>
-              <stop offset="1" stop-color="#6fa8dc"></stop>
-            </linearGradient>
-            <linearGradient id="area-fill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#2c3e50" stop-opacity="0.4"></stop>
-              <stop offset="0.5" stop-color="#42b983" stop-opacity="0.2"></stop>
-              <stop offset="1" stop-color="#6fa8dc" stop-opacity="0"></stop>
-            </linearGradient>
-          </defs>
-          <la-x-axis prop="datetime" :ticks="[]" color="rgba(0,0,0,0)"></la-x-axis>
-          <la-area
-            fill-color="url(#area-fill)"
-            curve
-            animated
-            :width="2"
-            prop="value"
-            color="url(#color-id)"
-          ></la-area>
-          <la-tooltip>
-            <div class="tooltip" slot-scope="props">
-              <div
-                :key="item.value"
-                v-for="item in props.actived"
-                v-show="item.value"
-                ><p class="time">{{getTimeFromUnix(+props.label)}}</p> — {{ getActualValue(monitor, props.label) }}ms</div>
-            </div>
-          </la-tooltip>
-        </la-cartesian>
+        <div class="second">
+          <la-cartesian :data="monitor.processed_response_times" :padding="2" autoresize>
+            <defs>
+              <linearGradient id="color-id" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#2c3e50"></stop>
+                <stop offset="0.5" stop-color="#42b983"></stop>
+                <stop offset="1" stop-color="#6fa8dc"></stop>
+              </linearGradient>
+              <linearGradient id="area-fill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#2c3e50" stop-opacity="0.4"></stop>
+                <stop offset="0.5" stop-color="#42b983" stop-opacity="0.2"></stop>
+                <stop offset="1" stop-color="#6fa8dc" stop-opacity="0"></stop>
+              </linearGradient>
+            </defs>
+            <la-x-axis prop="datetime" :ticks="[]" color="rgba(0,0,0,0)"></la-x-axis>
+            <la-area
+              fill-color="url(#area-fill)"
+              :curve="curveFunction"
+              animated
+              :width="2"
+              prop="value"
+              color="url(#color-id)"
+            ></la-area>
+            <la-tooltip>
+              <div class="tooltip" slot-scope="props">
+                <div :key="item.value" v-for="item in props.actived" v-show="item.value">
+                  <p class="time">{{getTimeFromUnix(+props.label)}}</p>
+                  — {{ getActualValue(monitor, props.label) }}ms
+                </div>
+              </div>
+            </la-tooltip>
+          </la-cartesian>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import {curveCatmullRom} from 'd3-shape';
+
 export default {
     name: 'home',
+    data() {
+        return {curveFunction: curveCatmullRom};
+    },
     methods: {
         update() {
             this.$store.dispatch('updateMonitors');
+            document.title = this.$store.getters.globalStatus ? '•ᴗ•' : 'ಠ_ಠ';
         },
         getTimeFromUnix(unix) {
             const pad = str => ('000' + str.toString()).slice(-2);
@@ -62,7 +69,10 @@ export default {
             )}`;
         },
         getActualValue(monitor, time) {
-            return monitor.processed_response_times.find(({datetime}) => datetime === time).actualValue
+            let el = monitor.processed_response_times.find(
+                ({ datetime }) => datetime === time
+            );
+            return el ? el.actualValue || -1 : -1;
         }
     },
     mounted() {
@@ -108,11 +118,20 @@ h1 {
     font-weight: bold;
 }
 
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 600px);
+    grid-gap: 32px;
+    justify-items: center;
+    max-width: calc(2 * 600px + 32px);
+    justify-content: center;
+    margin: 0 auto;
+}
+
 .card {
     border-radius: 5px;
     border: 1px solid #aaa;
-    margin-bottom: 16px;
-    margin-top: 16px;
+    max-width: 600px;
     padding: 0;
 }
 
