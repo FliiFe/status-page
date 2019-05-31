@@ -118,6 +118,7 @@ h1 {
     font-weight: bold;
 }
 
+@media (min-width: 650px) {
 .card-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, 600px);
@@ -127,11 +128,17 @@ h1 {
     justify-content: center;
     margin: 0 auto;
 }
+.card {
+    width: 600px;
+    margin: 0 !important;
+}
+}
+
 
 .card {
     border-radius: 5px;
     border: 1px solid #aaa;
-    max-width: 600px;
+    margin: 16px auto;
     padding: 0;
 }
 
